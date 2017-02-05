@@ -65,9 +65,11 @@ class PongGame(Widget):
 
         # space of p1 is the left third
         if touch.x < self.width / 3:
+            self.p1.dy = self.p1.center_y - touch.y
             self.p1.center_y = touch.y
         # space of p2 is the right third
         if touch.x > self.width * 2 / 3:
+            self.p2.dy = self.p2.center_y - touch.y
             self.p2.center_y = touch.y
 
 
@@ -78,16 +80,17 @@ class PongPaddle(Widget):
     # score of the player. Initialized with 0. GUI updates automatically as score is a NumericProperty. Score str
     #  is bound at pong.kv
     score = NumericProperty(0)
+    # speed of the paddle
+    dy = 0
 
     def bounce_ball(self, ball):
         """Call at each update()"""
         # if the pong paddle is collided with a ball, ball bounces with a different velocity than reflected velocity
         if self.collide_widget(ball):
             vx, vy = ball.v
-            offset = (ball.center_y - self.center_y) / (self.height / 2)
-            bounced = Vector(-1 * vx, vy)
-            vel = bounced * 1.1
-            ball.v = vel.x, vel.y + offset
+            bounced = Vector(-vx, vy + self.dy)
+            ball.v = bounced
+            # ball.v = vel.x, vel.y
 
 
 class PongBall(Widget):
